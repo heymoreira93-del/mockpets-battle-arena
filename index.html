@@ -1008,7 +1008,7 @@ function goToVS(){
 function buildStageSelect(){
   const con=document.getElementById('stageCardsContainer');con.innerHTML='';
   // If no stage selected, pick first
-  if(!selStage)selStage=STAGES[0];
+  if(!selStage)selStage=STAGES.find(s=>s.id==='ancient_temple')||STAGES[0];
   STAGES.forEach(st=>{
     const card=document.createElement('div');
     card.className='stage-card'+(selStage&&selStage.id===st.id?' stage-sel':'');
@@ -2298,7 +2298,7 @@ function playAgain(){
   // Re-pick CPU and play again with same character/mode/stage
   const aiCands=CHARS.filter(c=>c.id!==selChar.id);
   p2CharForMatch=aiCands[Math.floor(Math.random()*aiCands.length)];
-  if(!selStage)selStage=STAGES[0];
+  if(!selStage)selStage=STAGES.find(s=>s.id==='ancient_temple')||STAGES[0];
   showVSScreen(selChar,p2CharForMatch,()=>{
     if(_vsAnimTO)cancelAnimationFrame(_vsAnimTO);
     goTo('arena');setupHUD();resizeCv();setupInputs();setupJoystick();
