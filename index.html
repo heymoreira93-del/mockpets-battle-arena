@@ -224,7 +224,7 @@
 
   <div style="position:absolute;top:0;left:0;right:0;overflow:hidden;background:rgba(0,0,0,.5);padding:6px 0;border-bottom:1px solid rgba(0,245,255,.1);z-index:5;">
     <div style="white-space:nowrap;display:inline-block;animation:tickerScroll 22s linear infinite;font-family:&#39;Orbitron&#39;,monospace;font-size:10px;color:rgba(0,245,255,.55);">
-        ⚔️ 8 FIGHTERS READY  |  🤖 MECH-9 wins the championship  |  💀 REAPER reaches S+ rank  |  🌿 THORNAX new challenger  |  🎯 Sharpshooter badge unlocked  |  👊 VS CPU — FIGHT YOUR WAY TO THE TOP   
+        ⚔️ <span id="fightersReadyCount">8</span> FIGHTERS READY  |  🤖 MECH-9 wins the championship  |  💀 REAPER reaches S+ rank  |  🌿 THORNAX new challenger  |  🎯 Sharpshooter badge unlocked  |  👊 VS CPU — FIGHT YOUR WAY TO THE TOP   
     </div>
   </div>
   <style>@keyframes tickerScroll{from{transform:translateX(100%)}to{transform:translateX(-100%)}}</style>
@@ -617,8 +617,13 @@ const CHARS=[
   {id:'axiom',name:'AXIOM',type:'TECH FIGHTER',badge:'GEAR WITCH',imgUrl:'https://cdn-ai.onspace.ai/onspace/project/uploads/TEmXYzmNnxApadDbaYFxKS/Screenshot_5-7-2026_14837_www.meshy.ai.jpeg',col:'#c8e6c9',acc:'#ffbe0b',desc:'A scrappy cat mechanic armed with a robo-arm and experimental gadgets.',stats:{health:72,speed:90,strength:75,defense:60},specialMove:'Robo Punch — Extending robot arm long-range strike',special:{name:'ROBO PUNCH',dmg:52,col:'#c8e6c9'},baseHP:1000,w:44,h:72,objPos:'top center'},
   {id:'vessa',name:'VESSA',type:'WARRIOR',badge:'IRON MAIDEN',imgUrl:'https://cdn-ai.onspace.ai/onspace/project/uploads/Q7S3yisL8EQacJVv3KrkGy/Screenshot_5-7-2026_14754_www.meshy.ai.jpeg',col:'#e8c0b0',acc:'#c0392b',desc:'A battle-hardened warrior in silver armor with a razor-edged cape.',stats:{health:88,speed:70,strength:85,defense:80},specialMove:'Steel Veil — Cape sweep knocks down and stuns',special:{name:'STEEL VEIL',dmg:62,col:'#e8c0b0'},baseHP:1200,w:44,h:74,objPos:'top center'},
   {id:'ragna',name:'RAGNA',type:'BERSERKER',badge:'AXE QUEEN',imgUrl:'https://cdn-ai.onspace.ai/onspace/project/uploads/DDnjKrSVnCZu6kPjnBs6RV/Screenshot_5-7-2026_141513_www.meshy.ai.jpeg',col:'#d4a853',acc:'#e55a2b',desc:'A post-apocalyptic berserker who wields a battle axe with ruthless fury.',stats:{health:82,speed:72,strength:97,defense:65},specialMove:'Axe Fury — Spinning axe charge cleaves through all blocks',special:{name:'AXE FURY',dmg:75,col:'#d4a853'},baseHP:1150,w:44,h:74,objPos:'top center'},
+  {id:'mirefang',name:'MIREFANG',type:'BRUISER',badge:'SWAMP TITAN',imgUrl:'https://cdn-ai.onspace.ai/onspace/project/uploads/hhbj5Fq6Ba27g2gZ9CdKht/Screenshot_5-7-2026_134232_www.meshy.ai.jpeg',col:'#84d98a',acc:'#ff006e',desc:'A hulking sludge beast that overwhelms enemies with crushing body slams.',stats:{health:92,speed:48,strength:93,defense:83},specialMove:'Bog Crush — Ground-pound shockwave with poison splash',special:{name:'BOG CRUSH',dmg:72,col:'#84d98a'},baseHP:1280,w:52,h:60,objPos:'center center'},
+  {id:'umbra',name:'UMBRA',type:'SHADOW FIGHTER',badge:'NIGHT VEIL',imgUrl:'https://cdn-ai.onspace.ai/onspace/project/uploads/75vPSEfTh9fBk6A6RtXpzU/Screenshot_5-7-2026_134325_www.meshy.ai.jpeg',col:'#b8aacd',acc:'#8338ec',desc:'A spectral duelist who fades between dimensions to avoid counterattacks.',stats:{health:76,speed:88,strength:82,defense:68},specialMove:'Shade Rift — Vanish strike that drains super meter',special:{name:'SHADE RIFT',dmg:57,col:'#b8aacd'},baseHP:1040,w:42,h:74,objPos:'top center'},
+  {id:'valora',name:'VALORA',type:'TACTICIAN',badge:'IRON HEART',imgUrl:'https://cdn-ai.onspace.ai/onspace/project/uploads/Q7S3yisL8EQacJVv3KrkGy/Screenshot_5-7-2026_14754_www.meshy.ai.jpeg',col:'#f4b1a6',acc:'#c0392b',desc:'A disciplined arena commander who controls pace with precision counters.',stats:{health:86,speed:78,strength:84,defense:88},specialMove:'Command Breaker — Counter stance into armor-breaking slash',special:{name:'COMMAND BREAKER',dmg:64,col:'#f4b1a6'},baseHP:1220,w:44,h:74,objPos:'top center'},
 ];
 CHARS.forEach(c=>preloadImg(c.imgUrl));
+const fightersReadyCount=document.getElementById('fightersReadyCount');
+if(fightersReadyCount)fightersReadyCount.textContent=String(CHARS.length);
 
 const WEAPONS=[
   {id:'voidscythe',name:'VOID SCYTHE',icon:'💀',tag:'CURSED',tagCol:'#8b00ff',col:'#8b00ff',imgUrl:'https://cdn-ai.onspace.ai/onspace/project/uploads/YPEGsH2cPXQEMXA93UgSvq/image_efd642e9-e93f-4301-a546-5288975ee05f_0.png',desc:'A reality-tearing scythe crackling with void lightning.',stats:{damage:92,range:88,speed:55,cooldown:72},special:{name:'VOID SLASH',desc:'Soul-ripping wide arc — max damage + life drain',dmg:82,col:'#8b00ff',icon:'fa-skull',pierces:true,aoe:true}},
@@ -1378,10 +1383,10 @@ const AI_DIFF={
 function getDiff(){return AI_DIFF[selDifficulty]||AI_DIFF.easy;}
 
 function schedAI(){
-  if(!running)return;
   clearTimeout(aiTO);
-  if(!paused&&gs)runAI();
+  if(!gs)return;
   const d=getDiff();
+  if(running&&!paused&&!entranceAnim)runAI();
   aiTO=setTimeout(schedAI,d.minDelay+Math.random()*(d.maxDelay-d.minDelay));
 }
 
