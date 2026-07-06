@@ -1,0 +1,9 @@
+{
+  "name": "mockpets-battle-arena",
+  "user": "ubuntu",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "install": "corepack enable\npnpm install --frozen-lockfile"
+}

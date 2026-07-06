@@ -1,0 +1,11 @@
+{
+  "name": "mockpets-battle-arena",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.3",
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/check.mjs",
+    "build": "node scripts/build.mjs"
+  }
+}
